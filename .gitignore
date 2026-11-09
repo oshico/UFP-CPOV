@@ -1,0 +1,8 @@
+data/
+runs/
+*.pt
+*.rar
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+mise.local.toml
