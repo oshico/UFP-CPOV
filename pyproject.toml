@@ -1,0 +1,18 @@
+[project]
+name = "vcop-har"
+version = "0.1.0"
+description = "Human action recognition on UCF101-10 with VideoMAE (VCOP 2026/27, UFP)"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "torch>=2.1",
+    "torchvision>=0.16",
+    "transformers>=4.40",
+    "av>=12",
+    "pandas",
+    "scikit-learn",
+    "pyyaml",
+]
+
+[tool.uv]
+package = false  # scripts run from the repo root; nothing to build or install

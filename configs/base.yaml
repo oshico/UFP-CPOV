@@ -1,0 +1,36 @@
+# ---- Fixed by the assignment (section 5.1) ---------------------------------
+checkpoint: MCG-NJU/videomae-base-finetuned-kinetics
+classes: [ApplyLipstick, BrushingTeeth, PlayingGuitar, PlayingViolin, Typing,
+          WritingOnBoard, PushUps, JumpingJack, CuttingInKitchen, ApplyEyeMakeup]
+num_frames: 16
+image_size: 224
+k: 0                      # number of unfrozen final Transformer blocks (0, 1, 2)
+
+# ---- Data -------------------------------------------------------------------
+video_root: data/UCF-101  # contains <Class>/v_<Class>_gXX_cYY.avi
+splits_dir: splits        # teacher-provided train/validation/test.csv (versioned in git)
+path_column: null         # CSV column with the video file name; null = auto-detect
+
+# ---- Group decisions (preliminary, tuned on validation only) ----------------
+sampling: dense           # dense: one 16-frame clip, fixed stride (same temporal scale as
+                          #   Kinetics training; matters most with a frozen backbone)
+                          # uniform: one frame per 1/16 segment, covers the whole video
+dense_stride: 4           # 61 frames = 2.4 s at 25 fps (Kinetics: stride 4 at 30 fps)
+crop_scale: [0.7, 1.0]    # RandomResizedCrop area range (mild: classes depend on face/hands)
+hflip: true               # no class in the subset is left/right dependent
+
+lr_head: 1.0e-3           # AdamW; same values for every k, so k stays the only variable
+lr_backbone: 5.0e-5       # used only by unfrozen blocks (ignored when k=0)
+weight_decay: 0.05        # not applied to biases / LayerNorm
+batch_size: 8
+grad_accum: 1
+grad_clip: 1.0
+warmup_epochs: 1          # linear warm-up, then cosine decay
+epochs: 20
+patience: 5               # early stopping on val accuracy (tie-break: val loss)
+
+# ---- Run --------------------------------------------------------------------
+seed: 42
+num_workers: 2            # Colab has 2 CPU cores
+output_dir: runs
+debug_per_class: null     # e.g. 4 -> tiny stratified subset to smoke-test the pipeline

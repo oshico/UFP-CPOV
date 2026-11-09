@@ -1,0 +1,22 @@
+[tools]
+python = "3.12"  # same as Colab
+uv = "0.11"     # lock file generated with uv 0.11
+
+[env]
+_.python.venv = { path = ".venv", create = true }  # auto-activated when you cd into the repo
+
+[tasks.setup]
+description = "Install the locked dependencies into .venv"
+run = "uv sync --locked"
+
+[tasks.data]
+description = "Download UCF101 and extract the 10 project classes into data/"
+run = "bash scripts/get_ucf101.sh data"
+
+[tasks.sanity]
+description = "Kinetics-head predictions on validation videos (pipeline check)"
+run = "python infer.py --split validation --n 8"
+
+[tasks.train]
+description = "Train a strategy; extra args are config overrides: `mise run train k=1`"
+run = "python train.py --set"
